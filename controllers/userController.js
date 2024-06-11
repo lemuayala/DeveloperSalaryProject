@@ -1,4 +1,6 @@
-const { client } = require("../config/database");
+// controllers/userController.js
+
+const User = require("../models/userModel");
 
 const createUser = async (req, res) => {
   const {
@@ -10,22 +12,22 @@ const createUser = async (req, res) => {
     actualizacionSalario,
   } = req.body;
   try {
-    const database = client.db("DeveloperSalaryBD");
-    const usuariosCollection = database.collection("usuarios");
-    const usuario = {
+    // Crea una instancia del modelo User con los datos recibidos
+    const newUser = new User({
       nombre,
       apellido,
       correo,
       cargoActual,
       salarioNeto,
       actualizacionSalario,
-      fechaCreacion: new Date(),
-      fechaActualizacion: new Date(),
-    };
-    const result = await usuariosCollection.insertOne(usuario);
-    res.status(201).json({ message: "Usuario creado", id: result.insertedId });
-  } catch (err) {
-    res.status(500).json({ message: "Error al crear usuario", error: err });
+    });
+    // Guarda el nuevo usuario en la base de datos
+    await newUser.save();
+    res
+      .status(201)
+      .json({ message: "Usuario creado exitosamente", user: newUser });
+  } catch (error) {
+    res.status(500).json({ message: "Error al crear usuario", error });
   }
 };
 
