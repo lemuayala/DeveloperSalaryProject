@@ -48,4 +48,74 @@ const obtenerUsuarios = async (req, res) => {
   }
 };
 
-module.exports = { crearUsuario, obtenerUsuarios };
+const actualizarUsuario = async (req, res) => {
+  const { id } = req.params;
+  const {
+    nombre,
+    apellido,
+    correo,
+    cargoActual,
+    salarioNeto,
+    actualizacionSalario,
+    porcentajeAumento,
+    frecuenciaAumento,
+  } = req.body;
+
+  try {
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      id,
+      {
+        nombre,
+        apellido,
+        correo,
+        cargoActual,
+        salarioNeto,
+        actualizacionSalario,
+        porcentajeAumento,
+        frecuenciaAumento,
+        fechaActualizacion: Date.now(),
+      },
+      { new: true }
+    );
+
+    if (!usuarioActualizado) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res
+      .status(200)
+      .json({
+        message: "Usuario actualizado exitosamente",
+        data: usuarioActualizado,
+      });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error al actualizar usuario", error: error.message });
+  }
+};
+
+const eliminarUsuario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const usuarioEliminado = await Usuario.findByIdAndDelete(id);
+
+    if (!usuarioEliminado) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.status(200).json({ message: "Usuario eliminado exitosamente" });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error al eliminar usuario", error: error.message });
+  }
+};
+
+module.exports = {
+  crearUsuario,
+  obtenerUsuarios,
+  actualizarUsuario,
+  eliminarUsuario,
+};
