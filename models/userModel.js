@@ -1,43 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require("../config/database"); // Importa la conexión de Mongoose
 
-// Define el esquema del usuario
-const userSchema = new mongoose.Schema({
-  nombre: {
-    type: String,
-    required: true,
-  },
-  apellido: {
-    type: String,
-    required: true,
-  },
-  correo: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  cargoActual: {
-    type: String,
-    required: true,
-  },
-  salarioNeto: {
-    type: Number,
-    required: true,
-  },
-  actualizacionSalario: {
-    type: Boolean,
-    required: true,
-  },
-  fechaCreacion: {
-    type: Date,
-    default: Date.now,
-  },
-  fechaActualizacion: {
-    type: Date,
-    default: Date.now,
-  },
+const usuarioSchema = new mongoose.Schema({
+  nombre: { type: String, required: true },
+  apellido: { type: String, required: true },
+  correo: { type: String, required: true, unique: true },
+  cargoActual: { type: String, required: true },
+  salarioNeto: { type: Number, required: true },
+  actualizacionSalario: { type: Boolean, required: true },
+  porcentajeAumento: { type: Number },
+  frecuenciaAumento: { type: Number },
+  fechaCreacion: { type: Date, default: Date.now },
+  fechaActualizacion: { type: Date, default: Date.now },
 });
 
-// Crea el modelo User basado en el esquema
-const User = mongoose.model("User", userSchema);
+const Usuario = mongoose.model("Usuario", usuarioSchema);
 
-module.exports = User;
+module.exports = Usuario;

@@ -1,19 +1,15 @@
 const express = require("express");
-const { connectDB } = require("./config/database");
-const userRoutes = require("./routes/userRoutes");
-
+const bodyParser = require("body-parser");
+const { crearUsuario } = require("./controllers/userController");
+require("./config/database");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-app.use(express.json()); // Para parsear JSON en las peticiones
+app.use(bodyParser.json());
 
-app.use("/api", userRoutes);
+// Definicion de rutas
+app.post("/usuarios", crearUsuario);
 
-app.listen(port, async () => {
-  try {
-    await connectDB();
-    console.log(`Server running on port ${port}`);
-  } catch (err) {
-    console.error("Failed to connect to database", err);
-  }
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

@@ -1,8 +1,6 @@
-// controllers/userController.js
+const Usuario = require("../models/userModel");
 
-const User = require("../models/userModel");
-
-const createUser = async (req, res) => {
+const crearUsuario = async (req, res) => {
   const {
     nombre,
     apellido,
@@ -10,25 +8,31 @@ const createUser = async (req, res) => {
     cargoActual,
     salarioNeto,
     actualizacionSalario,
+    porcentajeAumento,
+    frecuenciaAumento,
   } = req.body;
+
+  const nuevoUsuario = new Usuario({
+    nombre,
+    apellido,
+    correo,
+    cargoActual,
+    salarioNeto,
+    actualizacionSalario,
+    porcentajeAumento,
+    frecuenciaAumento,
+  });
+
   try {
-    // Crea una instancia del modelo User con los datos recibidos
-    const newUser = new User({
-      nombre,
-      apellido,
-      correo,
-      cargoActual,
-      salarioNeto,
-      actualizacionSalario,
-    });
-    // Guarda el nuevo usuario en la base de datos
-    await newUser.save();
+    const resultado = await nuevoUsuario.save();
     res
       .status(201)
-      .json({ message: "Usuario creado exitosamente", user: newUser });
+      .json({ message: "Usuario creado exitosamente", data: resultado });
   } catch (error) {
-    res.status(500).json({ message: "Error al crear usuario", error });
+    res
+      .status(400)
+      .json({ message: "Error al crear usuario", error: error.message });
   }
 };
 
-module.exports = { createUser };
+module.exports = { crearUsuario };

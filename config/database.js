@@ -1,23 +1,16 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+// database.js
+const mongoose = require("mongoose");
 
-const uri = "insert the bd url here";
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+const uri =
+  "mongodb+srv://lemuayala:OarSX1T1x8Yn0hOn@developersalarybd.wstjjmb.mongodb.net/DeveloperSalaryBD?retryWrites=true&w=majority";
 
-async function connectDB() {
-  try {
-    await client.connect();
+mongoose
+  .connect(uri)
+  .then(() => {
     console.log("Connected to MongoDB Atlas");
-    return client;
-  } catch (err) {
-    console.error("Error connecting to MongoDB Atlas", err);
-    throw err;
-  }
-}
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB: ", err);
+  });
 
-module.exports = { connectDB, client };
+module.exports = mongoose;
