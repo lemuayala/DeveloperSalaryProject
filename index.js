@@ -1,14 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { crearUsuario } = require("./controllers/userController");
+const userRoutes = require("./routes/userRoutes");
 require("./config/database");
+
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 
-// Definicion de rutas
-app.post("/usuarios", crearUsuario);
+// Usa las rutas definidas en userRoutes.js
+app.use("/api", userRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

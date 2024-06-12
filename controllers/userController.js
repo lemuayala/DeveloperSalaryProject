@@ -35,4 +35,17 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-module.exports = { crearUsuario };
+const obtenerUsuarios = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    res
+      .status(200)
+      .json({ message: "Usuarios obtenidos exitosamente", data: usuarios });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error al obtener usuarios", error: error.message });
+  }
+};
+
+module.exports = { crearUsuario, obtenerUsuarios };
