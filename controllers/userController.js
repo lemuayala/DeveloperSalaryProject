@@ -1,5 +1,32 @@
 const Usuario = require("../models/userModel");
 
+const login = async (req, res) => {
+  const { correo, password } = req.body;
+
+  try {
+    const usuario = await Usuario.findOne({ correo });
+    if (!usuario) {
+      return res
+        .status(400)
+        .json({ message: "Correo o contraseña incorrectos" });
+    }
+
+    const isMatch = await bcrypt.compare(password, usuario.password);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ message: "Correo o contraseña incorrectos" });
+    }
+
+    const token = generateToken(usuario);
+    res.status(200).json({ message: "Inicio de sesión exitoso", token });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Error al iniciar sesión", error: error.message });
+  }
+};
+
 const crearUsuario = async (req, res) => {
   const {
     nombre,
@@ -82,12 +109,10 @@ const actualizarUsuario = async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Usuario actualizado exitosamente",
-        data: usuarioActualizado,
-      });
+    res.status(200).json({
+      message: "Usuario actualizado exitosamente",
+      data: usuarioActualizado,
+    });
   } catch (error) {
     res
       .status(400)
@@ -114,6 +139,7 @@ const eliminarUsuario = async (req, res) => {
 };
 
 module.exports = {
+  login,
   crearUsuario,
   obtenerUsuarios,
   actualizarUsuario,
