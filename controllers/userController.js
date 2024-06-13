@@ -1,121 +1,77 @@
-const Usuario = require("../models/userModel");
+const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
-const crearUsuario = async (req, res) => {
-  const {
-    nombre,
-    apellido,
-    correo,
-    cargoActual,
-    salarioNeto,
-    actualizacionSalario,
-    porcentajeAumento,
-    frecuenciaAumento,
-  } = req.body;
-
-  const nuevoUsuario = new Usuario({
-    nombre,
-    apellido,
-    correo,
-    cargoActual,
-    salarioNeto,
-    actualizacionSalario,
-    porcentajeAumento,
-    frecuenciaAumento,
-  });
-
+// Crear un nuevo usuario
+exports.createUser = async (req, res) => {
   try {
-    const resultado = await nuevoUsuario.save();
+    const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword });
+    await user.save();
     res
       .status(201)
-      .json({ message: "Usuario creado exitosamente", data: resultado });
+      .json({ message: "Usuario creado exitosamente", data: user });
   } catch (error) {
     res
-      .status(400)
+      .status(500)
       .json({ message: "Error al crear usuario", error: error.message });
   }
 };
 
-const obtenerUsuarios = async (req, res) => {
+// Obtener todos los usuarios
+exports.getUsers = async (req, res) => {
   try {
-    const usuarios = await Usuario.find();
-    res
-      .status(200)
-      .json({ message: "Usuarios obtenidos exitosamente", data: usuarios });
+    const users = await User.find();
+    res.status(200).json(users);
   } catch (error) {
     res
-      .status(400)
+      .status(500)
       .json({ message: "Error al obtener usuarios", error: error.message });
   }
 };
 
-const actualizarUsuario = async (req, res) => {
-  const { id } = req.params;
-  const {
-    nombre,
-    apellido,
-    correo,
-    cargoActual,
-    salarioNeto,
-    actualizacionSalario,
-    porcentajeAumento,
-    frecuenciaAumento,
-  } = req.body;
-
+// Obtener un usuario por ID
+exports.getUserById = async (req, res) => {
   try {
-    const usuarioActualizado = await Usuario.findByIdAndUpdate(
-      id,
-      {
-        nombre,
-        apellido,
-        correo,
-        cargoActual,
-        salarioNeto,
-        actualizacionSalario,
-        porcentajeAumento,
-        frecuenciaAumento,
-        fechaActualizacion: Date.now(),
-      },
-      { new: true }
-    );
-
-    if (!usuarioActualizado) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
-
     res
       .status(200)
-      .json({
-        message: "Usuario actualizado exitosamente",
-        data: usuarioActualizado,
-      });
+      .json({ message: "Usuario actualizado exitosamente", datya: user });
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Error al actualizar usuario", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-const eliminarUsuario = async (req, res) => {
-  const { id } = req.params;
-
+// Actualizar un usuario
+exports.updateUser = async (req, res) => {
   try {
-    const usuarioEliminado = await Usuario.findByIdAndDelete(id);
-
-    if (!usuarioEliminado) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-
-    res.status(200).json({ message: "Usuario eliminado exitosamente" });
+    const { name, email, password } = req.body;
+    const hashedPassword = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, password: hashedPassword },
+      { new: true }
+    );
+    res.status(200).json({
+      message: "Usuario actualizado exitosamente",
+      updatedUser,
+    });
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Error al eliminar usuario", error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-module.exports = {
-  crearUsuario,
-  obtenerUsuarios,
-  actualizarUsuario,
-  eliminarUsuario,
+// Eliminar un usuario
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(204).send({ message: "Usuario eliminado exitosamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
