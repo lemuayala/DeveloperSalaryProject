@@ -1,8 +1,9 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const userController = {};
 
 // Crear un nuevo usuario
-exports.createUser = async (req, res) => {
+userController.createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,7 +20,7 @@ exports.createUser = async (req, res) => {
 };
 
 // Obtener todos los usuarios
-exports.getUsers = async (req, res) => {
+userController.getUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
@@ -31,7 +32,7 @@ exports.getUsers = async (req, res) => {
 };
 
 // Obtener un usuario por ID
-exports.getUserById = async (req, res) => {
+userController.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -46,7 +47,7 @@ exports.getUserById = async (req, res) => {
 };
 
 // Actualizar un usuario
-exports.updateUser = async (req, res) => {
+userController.updateUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hashedPassword = password
@@ -67,7 +68,7 @@ exports.updateUser = async (req, res) => {
 };
 
 // Eliminar un usuario
-exports.deleteUser = async (req, res) => {
+userController.deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.status(204).send({ message: "Usuario eliminado exitosamente" });
@@ -75,3 +76,5 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+module.exports = userController;

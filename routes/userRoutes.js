@@ -1,17 +1,19 @@
 const express = require("express");
-const {
-  crearUsuario,
-  obtenerUsuarios,
-  actualizarUsuario,
-  eliminarUsuario,
-} = require("../controllers/userController");
 const router = express.Router();
+const userController = require("../controllers/userController");
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description:
+ */
 
 /**
  * @swagger
- * /usuarios:
+ * /api/users:
  *   post:
  *     summary: Crear usuario
+ *     tags: [Users]
  *     description: Crea un nuevo usuario.
  *     requestBody:
  *       description: Datos del nuevo usuario
@@ -39,13 +41,14 @@ const router = express.Router();
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post("/usuarios", crearUsuario);
+router.post("/", userController.createUser);
 
 /**
  * @swagger
- * /usuarios:
+ * /api/users:
  *   get:
  *     summary: Obtener todos los usuarios
+ *     tags: [Users]
  *     description: Retorna una lista de todos los usuarios.
  *     responses:
  *       200:
@@ -53,13 +56,14 @@ router.post("/usuarios", crearUsuario);
  *       404:
  *         description: No se encontraron usuarios
  */
-router.get("/usuarios", obtenerUsuarios);
+router.get("/", userController.getUsers);
 
 /**
  * @swagger
  * /usuarios/{id}:
  *   put:
  *     summary: Actualizar usuario
+ *     tags: [Users]
  *     description: Actualiza un usuario existente por su ID.
  *     parameters:
  *       - in: path
@@ -96,13 +100,14 @@ router.get("/usuarios", obtenerUsuarios);
  *       404:
  *         description: Usuario no encontrado
  */
-router.put("/usuarios/:id", actualizarUsuario);
+router.put("//:id", userController.getUserById);
 
 /**
  * @swagger
  * /usuarios/{id}:
  *   delete:
  *     summary: Eliminar usuario
+ *     tags: [Users]
  *     description: Elimina un usuario existente por su ID.
  *     parameters:
  *       - in: path
@@ -117,6 +122,6 @@ router.put("/usuarios/:id", actualizarUsuario);
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete("/usuarios/:id", eliminarUsuario);
+router.delete("//:id", userController.deleteUser);
 
 module.exports = router;
