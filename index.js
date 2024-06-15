@@ -1,36 +1,47 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const userRoutes = require("./routes/userRoutes");
-
-const swaggerUi = require("swagger-ui-express");
-const swaggerJSDoc = require("swagger-jsdoc");
-
 require("./config/database");
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "API de Developer Salary",
-      version: "1.0.0",
-      description: "API para gestionar salarios de desarrolladores",
-    },
-  },
-  // Paths to files containing OpenAPI definitions
-  apis: ["./routes/*.js"],
-};
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
-const swaggerSpec = swaggerJSDoc(options);
+// Import routes
+const userRoutes = require("./routes/userRoutes");
+const salaryRoutes = require("./routes/salaryRoutes");
+
+// Import swagger documentation
+const setupSwagger = require("./swagger");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Cors definitions
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://comforting-gnome-bc33ee.netlify.app",
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 204,
+};
+
+// Middleware
 app.use(bodyParser.json());
+app.use(cors(corsOptions));
 
-// Usa las rutas definidas en userRoutes.js
-app.use("/api", userRoutes);
+// Api endponits use the rotes files
+app.use("/api/users", userRoutes);
+app.use("/api/salaries", salaryRoutes);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Swagger config
+setupSwagger(app);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
