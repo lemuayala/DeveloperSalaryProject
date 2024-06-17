@@ -16,7 +16,7 @@ const port = process.env.PORT || 3000;
 
 // Cors definitions
 const allowedOrigins = [
-  "http://localhost:4200",
+  "http://localhost:3000",
   "https://comforting-gnome-bc33ee.netlify.app",
 ];
 

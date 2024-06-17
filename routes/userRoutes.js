@@ -60,7 +60,7 @@ router.get("/", userController.getUsers);
 
 /**
  * @swagger
- * /usuarios/{id}:
+ * api/users/{id}:
  *   put:
  *     summary: Actualizar usuario
  *     tags: [Users]
@@ -100,11 +100,11 @@ router.get("/", userController.getUsers);
  *       404:
  *         description: Usuario no encontrado
  */
-router.put("//:id", userController.getUserById);
+router.put("/:id", userController.getUserById);
 
 /**
  * @swagger
- * /usuarios/{id}:
+ * api/users/{id}:
  *   delete:
  *     summary: Eliminar usuario
  *     tags: [Users]
@@ -122,6 +122,6 @@ router.put("//:id", userController.getUserById);
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete("//:id", userController.deleteUser);
+router.delete("/:id", userController.deleteUser);
 
 module.exports = router;

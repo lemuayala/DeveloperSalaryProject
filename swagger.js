@@ -4,7 +4,7 @@ const swaggerUi = require("swagger-ui-express");
 // Configuración de Swagger
 const swaggerDefinition = {
   definition: {
-    openapi: "3.0.0",
+    openapi: "3.0.1",
     info: {
       title: "API for Argentine Developer Salaries",
       version: "1.0.0",
@@ -87,7 +87,7 @@ const swaggerDefinition = {
 // Paths to files containing OpenAPI definitions
 const options = {
   swaggerDefinition,
-  apis: ["/routes/*.js"],
+  apis: ["./routes/*.js"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
